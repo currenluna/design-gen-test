@@ -28,9 +28,14 @@
             barWidth: 2,
             url: mp3
         });
-        html2canvas(waveformHTML).then(canvas => {
+        html2canvas(document.body, {useCORS: true}).then(canvas => {
             document.body.appendChild(canvas)
         });
+
+
+        // var canvas = html2canvas(waveformHTML);
+        // doc.addImage(canvas.toDataURL('image/png'));
+
     });
 
     
