@@ -1,14 +1,17 @@
 <script lang="ts">
+    
     import { onMount } from "svelte";
     import { jsPDF } from "jspdf";
+    import videojs from "video.js";
     import WaveSurfer from "wavesurfer.js";
     import html2canvas from "html2canvas";
-
+    
     import mp3 from "$lib/sounds/cage.mp3";
-    import { text } from "@sveltejs/kit";
+    // import { text } from "@sveltejs/kit";
+    import video from "$lib/videos/sampl_2301_documentary-promo_v03.mp4"
 
-    let waveformHTML;
-    let wavesurfer;
+    let waveformHTML: HTMLElement;
+    let wavesurfer: WaveSurfer;
     let url: string;
     let title: string = "Hello World";
 
@@ -21,9 +24,39 @@
             waveColor: '#000000',
             progressColor: '#000000',
             cursorWidth: 0,
-            barWidth: 2,
-            url: mp3
+            barWidth: 4,
+            barGap: 4,
+            barRadius: 10,
+            url: video
         });
+
+        // let wave;
+        // let delay = setTimeout(() => {
+        //     wave = wavesurfer.getWrapper().querySelector(".canvases")?.querySelector("div")?.querySelector("canvas");
+        // }, 7000)
+
+        // Select the node that will be observed for mutations
+        const targetNode = wavesurfer.getWrapper();
+
+        // Options for the observer (which mutations to observe)
+        const config = { attributes: true, childList: true, subtree: true };
+
+        // Callback function to execute when mutations are observed
+        const callback = (mutationList: MutationRecord[], observer: MutationObserver) => {
+            for (const mutation of mutationList) {
+                if (mutation.type === "childList") {
+                    console.log("A child node has been added or removed.");
+                } else if (mutation.type === "attributes") {
+                    console.log(`The ${mutation.attributeName} attribute was modified`);
+                }
+            }
+        }
+
+        // Create an observer instance linked to the callback function
+        const observer = new MutationObserver(callback);
+
+        // Start observing the target node for configured mutations
+        observer.observe(targetNode, config);
 
         var c = document.getElementById("myCanvas") as HTMLCanvasElement;
         var ctx = c.getContext("2d")!;
@@ -75,6 +108,7 @@
     <div id="waveform"></div>
     <canvas id="myCanvas" width="400" height="500"></canvas>
     <input type="text" bind:value={title} on:change={updateTitle} on:input={updateTitle}>
+    <video src={video} id="myClip" playsinline></video>
 </main>
 
 <style>

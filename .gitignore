@@ -8,5 +8,6 @@ node_modules
 !.env.example
 .vercel
 .output
+.mp4
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
